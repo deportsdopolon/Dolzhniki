@@ -1,4 +1,4 @@
 
 ## Размещение проекта
 
-Основная папка на ПК: `C:\Projects\Dolzhniki`. Репозиторий: https://github.com/deportsdopolon/Dolzhniki. Основная ветка — `main`. Старые пути на ПК сохраняют совместимость; рабочая карта всех проектов: [Ai/REPOSITORIES.md](https://github.com/deportsdopolon/Ai/blob/main/REPOSITORIES.md).
+Основная папка: `/srv/kompai/Dolzhniki`. Репозиторий: https://github.com/deportsdopolon/Dolzhniki. Основная ветка — `main`. Карта проектов: [AI-Server/REPOSITORIES.md](https://github.com/deportsdopolon/AI-Server/blob/main/REPOSITORIES.md).
