@@ -1,30 +1,51 @@
-const CACHE = "kvz-dolzhniki-v3.2";
-const ASSETS = ["./", "./index.html", "./styles.css", "./app.js", "./manifest.json", "./icon.svg"];
+const CACHE = "kvz-dolzhniki-v3.3";
+const ASSETS = ["./", "./index.html", "./styles.css?v=3.3", "./app.js?v=3.3", "./manifest.json", "./icon.svg"];
+
+async function putFresh(cache, url) {
+  const res = await fetch(url, { cache: "reload" });
+  if (!res.ok) throw new Error(url);
+  await cache.put(url, res.clone());
+}
 
 self.addEventListener("install", (e) => {
-  e.waitUntil(caches.open(CACHE).then((c) => c.addAll(ASSETS)));
-  self.skipWaiting();
+  e.waitUntil((async () => {
+    const cache = await caches.open(CACHE);
+    await Promise.all(ASSETS.map((url) => putFresh(cache, url)));
+    await self.skipWaiting();
+  })());
 });
 
 self.addEventListener("activate", (e) => {
-  e.waitUntil(
-    caches.keys().then((keys) => Promise.all(keys.map((k) => (k === CACHE ? null : caches.delete(k)))))
-  );
-  self.clients.claim();
+  e.waitUntil((async () => {
+    const keys = await caches.keys();
+    await Promise.all(keys.filter((k) => k !== CACHE).map((k) => caches.delete(k)));
+    await self.clients.claim();
+    const windows = await self.clients.matchAll({ type: "window", includeUncontrolled: true });
+    await Promise.all(windows.map(async (client) => {
+      if (typeof client.navigate !== "function") return;
+      try { await client.navigate(client.url); } catch (_) {}
+    }));
+  })());
 });
 
 self.addEventListener("fetch", (e) => {
   const req = e.request;
-  e.respondWith(
-    caches.match(req).then((cached) =>
-      cached ||
-      fetch(req)
-        .then((res) => {
-          const copy = res.clone();
-          caches.open(CACHE).then((c) => c.put(req, copy));
-          return res;
-        })
-        .catch(() => cached)
-    )
-  );
+  if (req.method !== "GET") return;
+  e.respondWith((async () => {
+    const cache = await caches.open(CACHE);
+    try {
+      const res = await fetch(req);
+      if (res && res.ok && res.type === "basic") cache.put(req, res.clone()).catch(() => {});
+      return res;
+    } catch (_) {
+      const cached = await caches.match(req);
+      if (cached) return cached;
+      const url = new URL(req.url);
+      if (url.pathname.endsWith("/")) {
+        const index = await caches.match("./index.html");
+        if (index) return index;
+      }
+      throw _;
+    }
+  })());
 });
