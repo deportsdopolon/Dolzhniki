@@ -1,5 +1,5 @@
 // KVZ Dolzhniki PWA — клиенты + история операций
-const APP_VERSION = "3.3";
+const APP_VERSION = "3.4";
 
 const $ = (sel) => document.querySelector(sel);
 const $$ = (sel) => Array.from(document.querySelectorAll(sel));

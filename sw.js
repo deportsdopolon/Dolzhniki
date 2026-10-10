@@ -1,11 +1,15 @@
-const CACHE = "kvz-dolzhniki-v3.3";
-const ASSETS = ["./", "./index.html", "./styles.css?v=3.3", "./app.js?v=3.3", "./manifest.json", "./icon.svg"];
+const CACHE = "kvz-dolzhniki-v3.4";
+const ASSETS = ["./", "./index.html", "./go.html", "./styles.css?v=3.4", "./app.js?v=3.4", "./manifest.json", "./icon.svg"];
 
 async function putFresh(cache, url) {
   const res = await fetch(url, { cache: "reload" });
   if (!res.ok) throw new Error(url);
   await cache.put(url, res.clone());
 }
+
+self.addEventListener("message", (e) => {
+  if (e.data && e.data.type === "SKIP_WAITING") self.skipWaiting();
+});
 
 self.addEventListener("install", (e) => {
   e.waitUntil((async () => {
