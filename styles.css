@@ -1,7 +1,7 @@
 :root{
-  --bg:#0b0b0b; --card:#141414; --card2:#101010;
-  --text:#f3f3f3; --muted:#a6a6a6; --line:#232323;
-  --accent:#6ee7ff;
+  --bg:#2a1458; --card:#3d2178; --card2:#341c68;
+  --text:#ffffff; --muted:#efe6ff; --line:#7c5cbf;
+  --accent:#f3e8ff;
   --r:16px;
 }
 
@@ -11,7 +11,7 @@ body{
   min-height:100dvh;
   margin:0;
   font-family: system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-  background:linear-gradient(180deg,#0b0b0b,#070707);
+  background:linear-gradient(180deg,#3b1d78,#1d0d42);
   color:var(--text);
   -webkit-tap-highlight-color: transparent;
 }
@@ -20,7 +20,7 @@ body{
   position:sticky; top:0; z-index:10;
   display:flex; align-items:center; justify-content:space-between;
   padding:calc(14px + env(safe-area-inset-top)) calc(14px + env(safe-area-inset-right)) 10px calc(14px + env(safe-area-inset-left));
-  background:rgba(11,11,11,.92);
+  background:rgba(42,20,88,.94);
   backdrop-filter: blur(10px);
   border-bottom:1px solid var(--line);
 }
@@ -29,7 +29,7 @@ body{
 .logo{
   width:34px; height:34px; border-radius:12px;
   display:grid; place-items:center;
-  background: radial-gradient(circle at 30% 30%, #1f1f1f, #0d0d0d);
+  background: radial-gradient(circle at 30% 30%, #6d4bb8, #2a1458);
   border:1px solid var(--line);
   color:var(--accent); font-weight:700;
 }
@@ -43,7 +43,7 @@ body{
 }
 
 .panel{
-  background:rgba(20,20,20,.9);
+  background:rgba(61,33,120,.94);
   border:1px solid var(--line);
   border-radius:var(--r);
   padding:12px;
@@ -80,7 +80,7 @@ body{
   width:40px; height:40px;
   border-radius:14px;
   border:1px solid var(--line);
-  background:rgba(20,20,20,.9);
+  background:rgba(61,33,120,.94);
   color:var(--text);
   font-size:18px;
 }
@@ -88,7 +88,7 @@ body{
 .btn2{
   border-radius:12px;
   border:1px solid var(--line);
-  background:#0f0f0f;
+  background:#2f1864;
   color:var(--text);
   padding:10px 12px;
   font-size:13px;
@@ -96,14 +96,14 @@ body{
 
 .btnPrimary{
   border-radius:12px;
-  border:1px solid #2b2b2b;
-  background:linear-gradient(180deg,#1a1a1a,#0f0f0f);
+  border:1px solid #c4b5fd;
+  background:linear-gradient(180deg,#7c3aed,#5b21b6);
   color:var(--text);
   padding:10px 12px;
   font-size:13px;
   font-weight:700;
 }
-.btnPrimary.on{outline:2px solid rgba(110,231,255,.25)}
+.btnPrimary.on{outline:2px solid rgba(243,232,255,.55)}
 
 .btnDanger{
   border-radius:12px;
@@ -120,7 +120,7 @@ body{
 .card{
   border:1px solid var(--line);
   border-radius:var(--r);
-  background:rgba(20,20,20,.9);
+  background:rgba(61,33,120,.94);
   padding:12px;
 }
 .card.client{cursor:pointer}
@@ -131,11 +131,11 @@ body{
 .cbal.zero{color:var(--text)}
 
 .empty{
-  border:1px dashed #2a2a2a;
+  border:1px dashed #b9a0e8;
   border-radius:var(--r);
   padding:16px;
   color:var(--muted);
-  background:rgba(15,15,15,.6);
+  background:rgba(42,20,88,.55);
 }
 .empty2{color:var(--muted); padding:10px 0}
 
@@ -144,7 +144,7 @@ body{
 
 .modal{
   position:fixed; inset:0;
-  background:rgba(0,0,0,.55);
+  background:rgba(18,6,36,.62);
   display:none; align-items:flex-end; justify-content:center;
   padding:14px;
   padding-bottom:calc(14px + env(safe-area-inset-bottom));
@@ -153,7 +153,7 @@ body{
 
 .sheet{
   width:min(740px,100%);
-  background:#0e0e0e;
+  background:#2a1458;
   border:1px solid var(--line);
   border-radius:22px;
   overflow:hidden;
@@ -170,7 +170,7 @@ body{
 .sheetTitle{font-weight:900}
 .x{
   border:1px solid var(--line);
-  background:#0f0f0f;
+  background:#2f1864;
   color:var(--text);
   width:40px; height:40px;
   border-radius:14px;
@@ -193,7 +193,7 @@ body{
   border:1px solid var(--line);
   border-radius:14px;
   padding:10px 10px;
-  background:#0f0f0f;
+  background:#2f1864;
   cursor:pointer;
 }
 .entry:active{transform:scale(.99)}
@@ -215,7 +215,7 @@ body{
 
 .topActions{display:flex; gap:10px; align-items:center;}
 .btn.ghost{background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.12);}
-.footerLine{padding: 10px 18px calc(12px + env(safe-area-inset-bottom)); color: rgba(255,255,255,.35); font-size: 14px; text-align:center;}
+.footerLine{padding: 10px 18px calc(12px + env(safe-area-inset-bottom)); color: #ffffff; font-size: 14px; text-align:center;}
 /* prevent iOS zoom */
 input, textarea, select { font-size:16px; }
 .sheet{ max-height: calc(100dvh - env(safe-area-inset-top)); }
