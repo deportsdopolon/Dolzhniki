@@ -1,10 +1,11 @@
-const CACHE = "kvz-dolzhniki-v3.4";
-const ASSETS = ["./", "./index.html", "./go.html", "./styles.css?v=3.4", "./app.js?v=3.4", "./manifest.json", "./icon.svg"];
+const CACHE = "kvz-dolzhniki-v4";
+const ASSETS = ["./", "./index.html", "./go.html", "./styles.css", "./app.js", "./manifest.json", "./icon.svg"];
 
 async function putFresh(cache, url) {
-  const res = await fetch(url, { cache: "reload" });
-  if (!res.ok) throw new Error(url);
-  await cache.put(url, res.clone());
+  try {
+    const res = await fetch(url, { cache: "reload" });
+    if (res.ok && !res.redirected) await cache.put(url, res.clone());
+  } catch (_) {}
 }
 
 self.addEventListener("message", (e) => {
@@ -26,6 +27,7 @@ self.addEventListener("activate", (e) => {
     await self.clients.claim();
     const windows = await self.clients.matchAll({ type: "window", includeUncontrolled: true });
     await Promise.all(windows.map(async (client) => {
+      try { client.postMessage({ type: "RELOAD" }); } catch (_) {}
       if (typeof client.navigate !== "function") return;
       try { await client.navigate(client.url); } catch (_) {}
     }));
@@ -35,16 +37,21 @@ self.addEventListener("activate", (e) => {
 self.addEventListener("fetch", (e) => {
   const req = e.request;
   if (req.method !== "GET") return;
+  const url = new URL(req.url);
+  if (url.origin !== self.location.origin) return;
+  if (url.pathname.endsWith("/sw.js")) return;
+
   e.respondWith((async () => {
     const cache = await caches.open(CACHE);
     try {
-      const res = await fetch(req);
-      if (res && res.ok && res.type === "basic") cache.put(req, res.clone()).catch(() => {});
+      const res = await fetch(req.url, { cache: "no-store" });
+      if (res && res.ok && res.type === "basic" && !res.redirected) {
+        cache.put(req.url, res.clone()).catch(() => {});
+      }
       return res;
     } catch (_) {
-      const cached = await caches.match(req);
+      const cached = (await caches.match(req)) || (await caches.match(req.url));
       if (cached) return cached;
-      const url = new URL(req.url);
       if (url.pathname.endsWith("/")) {
         const index = await caches.match("./index.html");
         if (index) return index;

@@ -9,7 +9,63 @@
   <title>Должники</title>
   <link rel="manifest" href="manifest.json" />
   <link rel="icon" type="image/svg+xml" href="icon.svg" />
-  <link rel="stylesheet" href="styles.css?v=3.4" />
+  <link rel="stylesheet" href="styles.css" />
+  <script>
+    (function () {
+      if (!("serviceWorker" in navigator)) return;
+      function reloadOnce() {
+        var now = Date.now();
+        var prev = Number(sessionStorage.getItem("dolzhniki-reload-at") || 0);
+        if (now - prev < 15000) return;
+        sessionStorage.setItem("dolzhniki-reload-at", String(now));
+        location.reload();
+      }
+      navigator.serviceWorker.addEventListener("controllerchange", reloadOnce);
+      navigator.serviceWorker.addEventListener("message", function (e) {
+        if (e.data && e.data.type === "RELOAD") reloadOnce();
+      });
+      function kick(reg) {
+        if (!reg) return;
+        reg.update().catch(function () {});
+        if (reg.waiting) reg.waiting.postMessage({ type: "SKIP_WAITING" });
+      }
+      function stamp() {
+        var files = ["./index.html", "./styles.css", "./app.js", "./sw.js"];
+        return Promise.all(files.map(function (file) {
+          return fetch(file, { cache: "no-store" }).then(function (res) {
+            if (!res.ok) return file + ":err";
+            return file + "=" + (res.headers.get("etag") || "") + ":" + (res.headers.get("content-length") || "");
+          }).catch(function () { return file + ":off"; });
+        })).then(function (parts) { return parts.join("|"); });
+      }
+      function watch() {
+        stamp().then(function (next) {
+          if (!next || next.indexOf(":off") !== -1) return;
+          var prev = sessionStorage.getItem("dolzhniki-stamp");
+          if (prev && prev !== next) reloadOnce();
+          sessionStorage.setItem("dolzhniki-stamp", next);
+        }).catch(function () {});
+      }
+      navigator.serviceWorker.register("./sw.js", { updateViaCache: "none" }).then(function (reg) {
+        kick(reg);
+        watch();
+      }).catch(function () {});
+      document.addEventListener("visibilitychange", function () {
+        if (document.visibilityState !== "visible") return;
+        navigator.serviceWorker.getRegistration().then(kick).catch(function () {});
+        watch();
+      });
+      window.addEventListener("focus", function () {
+        navigator.serviceWorker.getRegistration().then(kick).catch(function () {});
+        watch();
+      });
+      setInterval(function () {
+        if (document.visibilityState !== "visible") return;
+        navigator.serviceWorker.getRegistration().then(kick).catch(function () {});
+        watch();
+      }, 30000);
+    })();
+  </script>
 </head>
 <body>
   <header class="topbar">
@@ -39,27 +95,6 @@
     </div>
   </div>
 
-  <script src="app.js?v=3.4"></script>
-  <script>
-    (function () {
-      if (!("serviceWorker" in navigator)) return;
-      var reloaded = false;
-      navigator.serviceWorker.addEventListener("controllerchange", function () {
-        if (reloaded) return;
-        reloaded = true;
-        location.reload();
-      });
-      function kick(reg) {
-        if (!reg) return;
-        reg.update().catch(function () {});
-        if (reg.waiting) reg.waiting.postMessage({ type: "SKIP_WAITING" });
-      }
-      navigator.serviceWorker.register("./sw.js", { updateViaCache: "none" }).then(kick).catch(function () {});
-      document.addEventListener("visibilitychange", function () {
-        if (document.visibilityState !== "visible") return;
-        navigator.serviceWorker.getRegistration().then(kick).catch(function () {});
-      });
-    })();
-  </script>
+  <script src="app.js"></script>
 </body>
 </html>
