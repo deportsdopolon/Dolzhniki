@@ -134,9 +134,11 @@ body{
   border:1px dashed #b9a0e8;
   border-radius:var(--r);
   padding:16px;
-  color:var(--muted);
+  color:#ffffff;
   background:rgba(42,20,88,.55);
 }
+.empty .btnPrimary{margin-top:12px}
+.topActions .btn2{padding:8px 10px; white-space:nowrap}
 .empty2{color:var(--muted); padding:10px 0}
 
 .hint{color:var(--muted); font-size:12px; margin-top:8px; line-height:1.4}

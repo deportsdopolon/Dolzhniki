@@ -1,5 +1,5 @@
 // KVZ Dolzhniki PWA — клиенты + история операций
-const APP_VERSION = "4";
+const APP_VERSION = "5";
 
 const $ = (sel) => document.querySelector(sel);
 const $$ = (sel) => Array.from(document.querySelectorAll(sel));
@@ -196,7 +196,18 @@ function escapeHtml(s) {
 }
 
 function makeEmpty() {
-  const d = el("div", "empty", 'Пусто. Нажми <b>"+"</b> чтобы добавить клиента.');
+  const d = el("div", "empty");
+  const title = el("div");
+  title.textContent = "Пока пусто.";
+  const hint = el("div", "hint");
+  hint.textContent = "Старая иконка сама не обновляется. На ней коротко нажми ⤓ и сохрани backup.json. Здесь нажми «Импорт» и выбери этот файл.";
+  const btn = document.createElement("button");
+  btn.className = "btnPrimary";
+  btn.type = "button";
+  btn.id = "btnImportEmpty";
+  btn.textContent = "Импорт копии";
+  btn.addEventListener("click", () => $("#fileImport").click());
+  d.append(title, hint, btn);
   return d;
 }
 
@@ -568,6 +579,14 @@ function bind() {
   $("#appVersion").textContent = `Версия: ${APP_VERSION}`;
 
   $("#btnAddClient").addEventListener("click", openAddClient);
+  $("#btnImport").addEventListener("click", () => $("#fileImport").click());
+  $("#fileImport").addEventListener("change", async (e) => {
+    const file = e.target.files && e.target.files[0];
+    e.target.value = "";
+    if (!file) return;
+    try { await importJSON(file); }
+    catch (err) { console.error(err); alert("Не удалось прочитать файл. Нужен backup.json со старой иконки."); }
+  });
   $("#btnClose").addEventListener("click", modal.close);
   $("#modal").addEventListener("click", (e) => { if (e.target.id === "modal") modal.close(); });
 
