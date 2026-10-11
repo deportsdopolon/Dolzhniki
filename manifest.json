@@ -3,8 +3,8 @@
   "short_name": "Должники",
   "start_url": "./",
   "display": "standalone",
-  "background_color": "#2a1458",
-  "theme_color": "#2a1458",
+  "background_color": "#100818",
+  "theme_color": "#100818",
   "icons": [
     {
       "src": "icon.svg",

@@ -1,5 +1,5 @@
 // KVZ Dolzhniki PWA — клиенты + история операций
-const APP_VERSION = "5";
+const APP_VERSION = "6";
 
 const $ = (sel) => document.querySelector(sel);
 const $$ = (sel) => Array.from(document.querySelectorAll(sel));
@@ -179,14 +179,14 @@ function el(tag, cls, html) {
 
 function makeClientRow(c) {
   const card = el("div", "card client");
-  const top = el("div", "row between");
+  const letter = el("div", "avatar");
+  letter.textContent = (c.name || "?").trim().charAt(0).toUpperCase() || "?";
+  const main = el("div", "cmain");
   const name = el("div", "cname", escapeHtml(c.name));
-  const bal = el("div", "cbal " + (c.balance > 0 ? "neg" : c.balance < 0 ? "pos" : "zero"), escapeHtml(fmtMoney(c.balance)));
-  top.append(name, bal);
-
   const sub = el("div", "muted small", c.lastDate ? `Последняя запись: ${escapeHtml(fmtDate(c.lastDate))}` : "Нет записей");
-  card.append(top, sub);
-
+  main.append(name, sub);
+  const bal = el("div", "cbal " + (c.balance > 0 ? "neg" : c.balance < 0 ? "pos" : "zero"), escapeHtml(fmtMoney(c.balance)));
+  card.append(letter, main, bal);
   card.addEventListener("click", () => openClient(c.id));
   return card;
 }
@@ -244,7 +244,7 @@ function openAddClient() {
   name.autocapitalize = "words";
   name.spellcheck = false;
 
-  const actions = el("div", "row between mt");
+  const actions = el("div", "split mt");
   const btnCancel = el("button", "btn2", "Отмена");
   const btnCreate = el("button", "btnPrimary", "Создать");
 
@@ -282,13 +282,13 @@ async function openClient(clientId) {
   const root = el("div", "clientSheet");
 
   // Header line
-  const head = el("div", "row between mb");
+  const head = el("div", "clientHead");
   const title = el("div", "sheetH", escapeHtml(c.name));
   const bal = el("div", "bigBal " + (c.balance > 0 ? "neg" : c.balance < 0 ? "pos" : "zero"), escapeHtml(fmtMoney(c.balance)));
   head.append(title, bal);
 
   // Actions: Взял / Отдал
-  const act = el("div", "row gap mb");
+  const act = el("div", "split");
   const btnTook = el("button", "btnPrimary", "Взял");
   const btnGave = el("button", "btn2", "Отдал");
   btnTook.type = "button";
@@ -304,7 +304,7 @@ async function openClient(clientId) {
   }
 
   // Footer actions
-  const foot = el("div", "row between mt");
+  const foot = el("div", "row between");
   const btnDelete = el("button", "btnDanger", "Удалить клиента");
   btnDelete.type = "button";
   const hint = el("div", "muted small", "Тап по строке — редактировать");
@@ -375,7 +375,7 @@ function openEntryEditor({ client, mode, entry }) {
   }
 
   // Mode chips
-  const chips = el("div", "row gap mt");
+  const chips = el("div", "split mt");
   const btnTook = el("button", "btnPrimary", "Взял");
   const btnGave = el("button", "btn2", "Отдал");
   btnTook.type = "button";
@@ -399,7 +399,7 @@ function openEntryEditor({ client, mode, entry }) {
   const meta = el("div", "muted small mt2", "Автосохранение: включено");
   root.appendChild(meta);
 
-  const actions = el("div", "row between mt");
+  const actions = el("div", "split mt");
   const btnClose = el("button", "btn2", "Готово");
   btnClose.type = "button";
 
